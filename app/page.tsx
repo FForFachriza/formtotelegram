@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, FormEvent, useRef } from "react";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import textTemplate from "@/app/utils/textTemplate";
@@ -24,19 +24,17 @@ export default function Home() {
     messageRef.current!.value = e.target.value;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
-      const { data } = await axios.post(
-        process.env.NEXT_PUBLIC_TELEGRAM_API_URL + process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID,
-        {
-          text: textTemplate(
-            emailRef.current!.value,
-            new Date().toLocaleString(),
-            messageRef.current!.value,
-            subjectRef.current!.value
-          ),
-        }
-      );
+      await axios.post(process.env.NEXT_PUBLIC_TELEGRAM_API_URL + process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID, {
+        text: textTemplate(
+          emailRef.current!.value,
+          new Date().toLocaleString(),
+          messageRef.current!.value,
+          subjectRef.current!.value
+        ),
+      });
       MySwal.fire({
         icon: "success",
         title: "Your message has been sent",
@@ -62,7 +60,7 @@ export default function Home() {
           Got a technical issue? Want to send feedback about a beta feature? Need details about our Business plan? Let
           us know.
         </p>
-        <section className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
           <div>
             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 ">
               Your email
@@ -106,12 +104,13 @@ export default function Home() {
             />
           </div>
           <button
-            onClick={handleSubmit}
+            type="submit"
+            // onClick={handleSubmit}
             className="py-3 px-5 text-sm font-medium text-center text-white rounded-lg bg-sky-700 sm:w-fit hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300"
           >
             Send message
           </button>
-        </section>
+        </form>
       </div>
     </section>
   );
