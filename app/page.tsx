@@ -32,8 +32,8 @@ export default function Home() {
           text: textTemplate(
             emailRef.current!.value,
             new Date().toLocaleString(),
-            subjectRef.current!.value,
-            messageRef.current!.value
+            messageRef.current!.value,
+            subjectRef.current!.value
           ),
         }
       );
